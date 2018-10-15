@@ -4,7 +4,12 @@
 # (Signed, Prof. R. Moore, h_da, fbi )
 
 # --------------------------------------------------------------------------
-all: dumbSort gensort valsort
+CC = g++8
+# Alternatives:
+# CC = clang++
+# CC = c++
+
+All: dumbSort gensort valsort
 
 gensort: gensort-1.5/gensort 
 	cp gensort-1.5/gensort .
@@ -16,11 +21,11 @@ gensort-1.5/gensort gensort-1.5/valsort:
 	+cd gensort-1.5 && make
 
 dumbSort: dumbSort.cpp gray_sort_record.h
-	c++ -std=c++11 -Wall -o dumbSort dumbSort.cpp
+	$(CC) -std=c++11 -Wall -o dumbSort dumbSort.cpp
 
 clean:
 	-rm -f *.o mpi-pi dumbSort gensort valsort
 	+cd gensort-1.5 && make clean
-	
+
 
 
