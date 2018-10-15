@@ -1,4 +1,4 @@
-# Exercise Zero : Sorting
+# Exercise One : Sorting
 
 The goal of this exercise is to investigate ways to do sorting in parallel, using threads. 
 

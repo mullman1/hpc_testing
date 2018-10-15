@@ -1,16 +1,20 @@
-# Exercise Zero : Sorting
+Exercise Zero : Getting Started
+===============================
 
-The goal of this exercise is to investigate ways to do sorting in parallel, using threads. 
+The goal of this exercise is to get up and running. 
 
-We will be sorting 100 byte records taken from files. This idea was taken from the "Sort Benchmark" hosted at http://sortbenchmark.org/ -- see that web page for much more information.
+You should find here three programs and one make file.
 
-There are three tools here:
-1. **gensort** -- a tool for generating data to be sorted. You should use this unchanged (unless you have *very* good reasons for changing it). The original version of this program is available at http://www.ordinal.com/gensort.html 
-2. **valsort** -- a tool for validating sorted output. This tool should also not be changed and comes from the same source as gensort.
-3. **dumbsort** -- a non-parallel (single-threaded), very simple sorting program that takes input created by gensort and creates output which can be validated by valsort. This code was written by Prof. R. C. Moore (ronald.moore@h-da.de) for the P%DC course.
+To build all three programs, enter "make" on the command line.
 
-Your job is to create a parallel, multi-threaded sort program. You may start with the code from the dumbsort program if you like, or you might want to start from scratch. This is up to you. 
+To test all three programs, enter "make tests" on the command line.
 
-After you have your own program up and running, start measuring its performance and write a lab report, as described in Moodle. 
+If all is good, all three programs should run, using slurm -- the correct way to run programs on the Big Data Cluster. If you are testing these programs at home, you will probably want to change the Makefile to test without slurm (just comment out the lines you don't want, and uncomment the lines provided for you).
+
+The next step is to modify these programs so that they run **much** longer than they do now.
+
+You may need to change the Makefile as well -- particularly the test for the MPI program may need to be changed.
+
+After you have your versions of the programs (and Makefile) up and running, start measuring their performance and write a lab report, as described in Moodle. 
 
 Prof. R. C. Moore
