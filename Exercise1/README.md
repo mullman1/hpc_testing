@@ -5,9 +5,11 @@ The goal of this exercise is to investigate ways to do sorting in parallel, usin
 We will be sorting 100 byte records taken from files. This idea was taken from the "Sort Benchmark" hosted at http://sortbenchmark.org/ -- see that web page for much more information.
 
 There are three tools here:
-1. **gensort** -- a tool for generating data to be sorted. You should use this unchanged (unless you have *very* good reasons for changing it). The original version of this program is available at http://www.ordinal.com/gensort.html 
-2. **valsort** -- a tool for validating sorted output. This tool should also not be changed and comes from the same source as gensort.
+1. **gensort** -- a tool for generating data to be sorted. 
+2. **valsort** -- a tool for validating sorted output.
 3. **dumbsort** -- a non-parallel (single-threaded), very simple sorting program that takes input created by gensort and creates output which can be validated by valsort. This code was written by Prof. R. C. Moore (ronald.moore@h-da.de) for the P%DC course.
+
+The first two tools (gensort and valsort) are in the directory **gensort-1.5**. You should use these unchanged (unless you have *very* good reasons for changing either of them). The original version of this software is available at http://www.ordinal.com/gensort.html. The readme file and the license are also original. Build these tools by simply typing "make" on the command line.
 
 Your job is to create a parallel, multi-threaded sort program. You may start with the code from the dumbsort program if you like, or you might want to start from scratch. This is up to you. 
 

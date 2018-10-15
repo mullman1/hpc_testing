@@ -18,6 +18,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+/* This file has been simplified for readability (only) by
+ * Prof. R. C. Moore (ronald.moore@h-da.de).
+ */
+
 char *Version = "1.5";
 
 #include <stdio.h>
@@ -25,22 +29,6 @@ char *Version = "1.5";
 #include <string.h>
 #include "rand16.h"
 #include <zlib.h>   /* use crc32() function in zlib */
-
-#if defined(SUMP_PUMP)
-# include "sump.h"
-# include <fcntl.h>
-
-/* Number of records to be generated per output block */
-# define BLK_RECS       100000
-
-/* "instruction" structure that is passed to sump pump threads */
-struct gen_instruct
-{
-    u16         starting_rec;   /* starting record number */
-    u8          num_recs;       /* the number of records to generate */
-};
-
-#endif
 
 #define REC_SIZE       100
 #define SKEW_BYTES     6
@@ -724,59 +712,6 @@ void gen_ascii_skewed_rec(unsigned char *rec_buf, rand_queue *rq)
 }
 
 
-#if defined(SUMP_PUMP)
-/* gen_block -  pump function that reads a task instruction from the
- *              process's main thread.  The instruction consists of the
- *              beginning record number and the number of records to be
- *              generated.  The records are written to the task output.
- *              The sump pump infrastructure will run multiple instances
- *              of this function in parallel, and concatenate their
- *              outputs to form the output of the sump pump.
- */
-int gen_block(sp_task_t t, void *unused)
-{
-    struct gen_instruct *ip;
-    struct gen_instruct instruct;
-    u8                  j;
-    u16                 temp16 = {0LL, 0LL};
-    u16                 sum16 = {0LL, 0LL};
-    unsigned char       rec_buf[100];
-    rand_queue          rq;
-
-    /* read instruction from the thread's input */
-    if (pfunc_get_rec(t, &ip) != sizeof(instruct))
-        return (pfunc_error(t, "sp_get_rec() error"));
-    instruct = *ip;
-        
-    init_rand_queue(&rq, instruct.starting_rec);
-    
-    for (j = 0; j < instruct.num_recs; j++)
-    {
-        (*Gen)(rec_buf, &rq);
-        if (Print_checksum)
-        {
-            temp16.lo8 = crc32(0, rec_buf, REC_SIZE);
-            sum16 = add16(sum16, temp16);
-        }
-        if (!Skip_output)
-            pfunc_write(t, 0, rec_buf, REC_SIZE);
-        bump_queue(&rq);
-    }
-
-    /* add the checksum for the block of records just generated to
-     * the global checksum.
-     *
-     * this could be done without a mutex by outputing the checksum
-     * to a second output stream that is read by the main thread,
-     * but this way is much simpler.
-     */
-    pfunc_mutex_lock(t);
-    Sum16 = add16(Sum16, sum16);  
-    pfunc_mutex_unlock(t);
-    
-    return (SP_OK);
-}
-#endif
 
 
 static char usage_str[] =
@@ -799,25 +734,8 @@ static char usage_str[] =
     "          first record generated is record 0.\n"
     "-s        Generate input records with skewed keys. If used with -a\n"
     "          option, then skewed ascii records are generated.\n"
-#if defined(SUMP_PUMP)
-    "-tN       Use N internal program threads to generate the records.\n"
-#endif
     "NUM_RECS  The number of sequential records to generate.\n"
-#if defined(SUMP_PUMP)
-    "FILE_NAME[,opts] The name of the file to write the records to.\n"
-    "          File options may immediately follow the file name:\n"
-    "          ,buf           Use buffered and synchronous file writes,\n"
-    "                         instead of the default direct and asynchronous\n"
-    "                         writes.\n"
-    "          ,dir           Use direct and asynchronous file writes.\n"
-    "                         The is the default.\n"
-    "          ,trans=N[k,m,g] Sets the file write request size in bytes,\n"
-    "                         kilobytes, megabytes or gigabytes.\n"
-    "          ,count=N       Sets the maximum number of simultaneous\n"
-    "                         asynchronous write requests allowed.\n"
-#else
     "FILE_NAME The name of the file to write the records to.\n"
-#endif
     "\n"
     "Example 1 - to generate 1000000 ascii records starting at record 0 to\n"
     "the file named \"pennyinput\":\n"
@@ -847,9 +765,6 @@ void usage(void)
 {
     fprintf(stderr, usage_str);
     fprintf(stderr, "\nVersion %s, cvs $Revision: 1.14 $\n", Version);
-#if defined(SUMP_PUMP)
-    fprintf(stderr, "SUMP Pump version %s\n", sp_get_version());
-#endif
     exit(1);
 }
 
@@ -864,13 +779,6 @@ int main(int argc, char *argv[])
     u16                 temp16 = {0LL, 0LL};
     char                sumbuf[U16_ASCII_BUF_SIZE];
     rand_queue          rq;
-#if defined(SUMP_PUMP)
-    int                 number_threads = 0;
-    int                 ret;
-    sp_t                sp_gen;         /* handle for sump pump */
-    u8                  blk_recs;
-    struct gen_instruct instruct;
-#endif
     
     starting_rec_number.hi8 = 0;
     starting_rec_number.lo8 = 0;
@@ -896,10 +804,6 @@ int main(int argc, char *argv[])
             else if (Gen == gen_ascii_rec)
                 Gen = gen_ascii_skewed_rec;
         }
-#if defined(SUMP_PUMP)
-        else if (argv[1][1] == 't')
-            number_threads = atoi(argv[1] + 2);
-#endif
         else
             usage();
         argc--;
@@ -910,87 +814,28 @@ int main(int argc, char *argv[])
     num_recs = dec_to_u16(argv[1]);
     Skip_output = (strcmp(argv[2], "/dev/null") == 0);
 
-#if defined(SUMP_PUMP)
-    if (number_threads != 1)
-    {
-        /* start a sump pump to generate records using the gen_block()
-         * function.  Making the input buffer size the size of an
-         * instruction structure insures that each sump pump task executes
-         * exactly one instruction.  The output buffer size will hold the
-         * maximum number of records that will be generated per instruction.
-         */
-        ret = sp_start(&sp_gen, gen_block,
-                       "-IN_BUF_SIZE=%d -REC_SIZE=%d -OUT_BUF_SIZE[0]=%d "
-                       "-OUT_FILE[0]=%s -THREADS=%d",
-                       sizeof(struct gen_instruct),  /* input buf size */
-                       sizeof(struct gen_instruct),  /* input record size */
-                       BLK_RECS * REC_SIZE,          /* output buf size */
-                       argv[2],                      /* file name */
-                       number_threads);
-        if (ret)
-        {
-            fprintf(stderr, "sp_start failed: %s\n",
-                    sp_get_error_string(sp_gen, ret));
-            return (ret);
-        }
+	/* use just this single thread */
+	
+	if ((out = fopen(argv[2], "w")) == NULL)
+	{
+		perror(argv[2]);
+		exit(1);
+	}
+	
+	init_rand_queue(&rq, starting_rec_number);
 
-        /* Feed generate instruction structures to the sump pump threads.
-         * Each instruction struct will handled by a sump pump thread
-         * executing the gen_block() pump function.
-         */
-        instruct.starting_rec = starting_rec_number;
-        for (j = 0; (j * BLK_RECS) < num_recs.lo8; j++)
-        {
-            /* set starting rec and number of recs to generate */
-            /* instruct.starting_rec.lo8 = (j * BLK_RECS); */
-            blk_recs = num_recs.lo8 - (j * BLK_RECS);
-            if (blk_recs > BLK_RECS)
-                blk_recs = BLK_RECS;
-            instruct.num_recs = blk_recs;
-            if (sp_write_input(sp_gen, &instruct, sizeof(instruct)) !=
-                sizeof(instruct))
-            {
-                fprintf(stderr, "sp_write_input: %s\n",
-                        sp_get_error_string(sp_gen, SP_WRITE_ERROR)), exit(1);
-            }
-            instruct.starting_rec.lo8 += BLK_RECS;
-        }
-        /* write EOF to sump pump so it will wind down */
-        if (sp_write_input(sp_gen, NULL, 0) != 0)
-            fprintf(stderr, "sp_write_input(0): %s\n",
-                    sp_get_error_string(sp_gen, SP_WRITE_ERROR)), exit(1); 
-
-        /* wait for sump pump to finish */
-        if ((ret = sp_wait(sp_gen)) != SP_OK)
-            fprintf(stderr, "sp_wait: %s\n",
-                    sp_get_error_string(sp_gen, ret)), exit(1); 
-    }
-    else
-#endif
-    {
-        /* use just this single thread */
-        
-        if ((out = fopen(argv[2], "w")) == NULL)
-        {
-            perror(argv[2]);
-            exit(1);
-        }
-        
-        init_rand_queue(&rq, starting_rec_number);
-    
-        for (j = 0; j < num_recs.lo8; j++)
-        {
-            (*Gen)(rec_buf, &rq);
-            if (Print_checksum)
-            {
-                temp16.lo8 = crc32(0, rec_buf, REC_SIZE);
-                Sum16 = add16(Sum16, temp16);
-            }
-            if (!Skip_output)
-                fwrite(rec_buf, REC_SIZE, 1, out);
-            bump_queue(&rq);
-        }
-    }
+	for (j = 0; j < num_recs.lo8; j++)
+	{
+		(*Gen)(rec_buf, &rq);
+		if (Print_checksum)
+		{
+			temp16.lo8 = crc32(0, rec_buf, REC_SIZE);
+			Sum16 = add16(Sum16, temp16);
+		}
+		if (!Skip_output)
+			fwrite(rec_buf, REC_SIZE, 1, out);
+		bump_queue(&rq);
+	}
     
     if (Print_checksum)
         fprintf(stderr, "%s\n", u16_to_hex(Sum16, sumbuf));

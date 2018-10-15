@@ -8,11 +8,7 @@
  * arising from the use of this software.
  */
 
-#if defined(_WIN32)
-typedef unsigned __int64        u8;
-#else
 typedef unsigned long long      u8;
-#endif
 
 typedef struct
 {

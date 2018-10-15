@@ -18,6 +18,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+ /* This file has been simplified for readability (only) by
+  * Prof. R. C. Moore (ronald.moore@h-da.de).
+  */
+  
 char *Version = "1.5";
 
 #include <stdio.h>
@@ -26,17 +30,8 @@ char *Version = "1.5";
 #include <zlib.h>   /* use crc32() function */
 #include "rand16.h"
 
-#if defined(SUMP_PUMP)
-# include <fcntl.h>
-# include "sump.h"
-#endif  /* end defined(SUMP_PUMP) */
-
 #define REC_SIZE 100
 #define SUM_SIZE (sizeof(struct summary))
-
-#if defined(_WIN32)
-# define strcasecmp  _stricmp
-#endif
 
 /* Comparison routine, either memcmp() or strcasecmp() */
 int     (*Compare)(const unsigned char *a, const unsigned char *b, size_t n) =
@@ -71,18 +66,8 @@ unsigned char *next_rec(void *in, unsigned char *rec_buf, struct summary *sum)
     unsigned char       *rec = NULL;
     u16                 temp16 = {0LL, 0LL};
 
-#if defined(SUMP_PUMP)
-    if (Multithreaded)
-    {
-        /* get the record from the sump pump infrastructure */
-        read_size = (int)pfunc_get_rec(in, &rec);
-    }
-    else
-#endif
-    {
-        read_size = fread(rec_buf, 1, REC_SIZE, in);
-        rec = rec_buf;
-    }
+    read_size = fread(rec_buf, 1, REC_SIZE, in);
+    rec = rec_buf;
     
     if (read_size == REC_SIZE)
     {
@@ -116,17 +101,8 @@ int summarize_records(void *in, void *unused)
     unsigned char       rec_buf[REC_SIZE];
     unsigned char       prev[REC_SIZE];
     char                sumbuf[U16_ASCII_BUF_SIZE];
-#if defined(SUMP_PUMP)
-    struct summary      local_summary;
 
-    if (Multithreaded)
-    {
-        sum = &local_summary;
-        memset(sum, 0, sizeof(struct summary));
-    }
-    else
-#endif
-        sum = &Summary;
+    sum = &Summary;
 
     if ((rec = next_rec(in, rec_buf, sum)) == NULL)
     {
@@ -163,15 +139,7 @@ int summarize_records(void *in, void *unused)
     }
     memcpy(sum->last_rec, prev, REC_SIZE);  /* set last record for summary */
 
-#if defined(SUMP_PUMP)
-    if (Multithreaded)
-    {
-        pfunc_write(in, 0, sum, SUM_SIZE);
-        return (SP_OK);
-    }
-    else
-#endif
-        return (0);
+    return (0);
 }
 
 
@@ -181,12 +149,7 @@ int next_sum(void *in, struct summary *sum)
 {
     int                 ret;
 
-#if defined(SUMP_PUMP)
-    if (Multithreaded)
-        ret = (int)sp_read_output(in, 0, sum, SUM_SIZE);  /* from sump pump */
-    else
-#endif
-        ret = fread(sum, 1, SUM_SIZE, in);           /* get from file */
+    ret = fread(sum, 1, SUM_SIZE, in);           /* get from file */
     
     if (ret == 0)
         return (0);
@@ -292,11 +255,7 @@ static char usage_str[] =
     "Valsort Sort Output Validator\n"
     "\n"
     "usage: valsort [-i] [-q] "
-#if defined(SUMP_PUMP)
-    "[-tN] [-o SUMMARY_FILE] [-s] FILE_NAME[,opts]\n"
-#else
     "[-o SUMMARY_FILE] [-s] FILE_NAME\n"
-#endif
     "-i        Use case insensitive ascii comparisons (optional for PennySort).\n"
     "          Case sensitive ascii or binary keys are assumed by default.\n"
     "-q        Quiet mode, don't output diagnostic text.\n"
@@ -307,24 +266,8 @@ static char usage_str[] =
     "          the valsort program with the -s flag.\n"
     "-s        The file to validate contains partition summaries instead of\n"
     "          sorted records.\n"
-#if defined(SUMP_PUMP)
-    "-tN       Use N internal program threads to validate the records.\n"
-    "FILE_NAME[,opts] The name of the sort output file or the partition\n"
-    "          summaries file to validate. File options may immediately\n"
-    "          follow the file name:\n"
-    "          ,buf           Use buffered and synchronous file reads,\n"
-    "                         instead of the default direct and asynchronous\n"
-    "                         reads.\n"
-    "          ,dir           Use direct and asynchronous file reads.\n"
-    "                         The is the default.\n"
-    "          ,trans=N[k,m,g] Sets the file read request size in bytes,\n"
-    "                         kilobytes, megabytes or gigabytes.\n"
-    "          ,count=N       Sets the maximum number of simultaneous\n"
-    "                         asynchronous read requests allowed.\n"
-#else
     "FILE_NAME The name of the sort output file or the partition summaries\n"
     "          file to validate.\n"
-#endif
     "\n"
     "Example 1 - to validate the sorted order of a single sort output file:\n"
     "    valsort sortoutputfile\n"
@@ -358,9 +301,6 @@ void usage(void)
 {
     fprintf(stderr, usage_str);
     fprintf(stderr, "\nVersion %s, cvs $Revision: 1.14 $\n", Version);
-#if defined(SUMP_PUMP)
-    fprintf(stderr, "SUMP Pump version %s\n", sp_get_version());
-#endif
     exit(1);
 }
 
@@ -370,11 +310,6 @@ int main(int argc, char *argv[])
     FILE                *in;
     char                sumbuf[U16_ASCII_BUF_SIZE];
     FILE                *out = NULL;
-#if defined(SUMP_PUMP)
-    int                 number_threads = 0;
-    int                 ret;
-    sp_t                sp_val;         /* handle for sump pump */
-#endif
     
     while (argc > 1 && argv[1][0] == '-')
     {
@@ -397,10 +332,6 @@ int main(int argc, char *argv[])
             Quiet = 1;
         else if (argv[1][1] == 's')
             Read_summary = 1;
-#if defined(SUMP_PUMP)
-        else if (argv[1][1] == 't')
-            number_threads = atoi(argv[1] + 2);
-#endif
         else
             usage();
         argc--;
@@ -417,36 +348,6 @@ int main(int argc, char *argv[])
         sum_summaries(in);
     }
     /* else we are validating a file with records in sorted order */
-#if defined(SUMP_PUMP)
-    else if (number_threads != 1)
-    {
-        Multithreaded = 1;
-        
-        /* start a sump pump to validate the correct order of records.
-         * the sump pump infrastructure will break the file being
-         * validated into separate blocks that will be summarized by
-         * separate threads.  this thread will then validate the
-         * summaries.
-         */
-        ret = sp_start(&sp_val, (sp_pump_t)summarize_records,
-                       "-IN_FILE=%s -IN_BUF_SIZE=%d -REC_SIZE=%d "
-                       "-OUT_BUF_SIZE[0]=%d -THREADS=%d",
-                       argv[1],
-                       4 * 1024 * 1024,              /* input buf size */
-                       REC_SIZE,                     /* input record size */
-                       sizeof(struct summary),       /* output buf size */
-                       number_threads);
-        if (ret)
-        {
-            fprintf(stderr, "sp_start failed: %s\n",
-                    sp_get_error_string(sp_val, ret));
-            return (ret);
-        }
-
-        /* sum the summaries that are the output of the sump pump */
-        sum_summaries(sp_val);
-    }
-#endif
     else
     {
         /* else validate the order of records with using only main thread */
