@@ -1,4 +1,6 @@
-# executables
-cpp1-pi
+###############
+# executables #
+###############
+cpp11-pi
 mpi-pi
 openMP-pi
