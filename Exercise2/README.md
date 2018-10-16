@@ -40,8 +40,7 @@ In your design, analysis and lab report, think about space as well as time.
 In other words, the goal is not *only* to be as fast as possible,
 it is also to multiply *very large* matrices.
 
-Acknowledgements and Apologies
-______________________________
+###Acknowledgements and Apologies
 
 This code is very old.
 (Working with legacy code is part of being a computer scientist!).
