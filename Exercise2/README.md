@@ -7,8 +7,16 @@ This directory contains a Makefile and three programs:
 1. matrix_parallel -- an MPI program that reads in two matrix files, forgets to multiply them,
 and then writes out a blank result matrix.
 
-File Format
------------
+### Building the Programs
+
+Enter "make" at the command line.
+
+Enter "make test" to test all three programs (on very small matrices).
+
+Enter "make clean" or "make distclean" to clean up.
+
+### File Format
+
 
 The file format is very simple.
 The first line in each file contains the size of the matrix, i.e.
@@ -21,8 +29,7 @@ e.g.
 
 After that, each row contains one row of the matrix. The matrices hold floating point numbers, and all data is in text.
 
-Exercise
---------
+### Exercise
 
 Write a better matrix multiplication program using MPI.
 
