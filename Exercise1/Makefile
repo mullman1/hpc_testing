@@ -4,28 +4,42 @@
 # (Signed, Prof. R. Moore, h_da, fbi )
 
 # --------------------------------------------------------------------------
-CC = g++8
-# Alternatives:
-# CC = clang++
-# CC = c++
+# Alternatives Compilers:
+# CC = g++7
+# CC = g++8
+# CC = clang++ # BROKEN - Beware!!!
+CC = cpp
 
-All: dumbSort gensort valsort
+CFLAGS=-Wall -O3
 
-gensort: gensort-1.5/gensort 
-	cp gensort-1.5/gensort .
+# For recursive make in the UTILS subdirectory, see:
+# https://www.gnu.org/software/make/manual/make.html#Recursion
 
-valsort: gensort-1.5/valsort 
-	cp gensort-1.5/valsort .
+UTILS=gensort-1.5
 
-gensort-1.5/gensort gensort-1.5/valsort:
-	+cd gensort-1.5 && make
+All: dumbSort utils
+
+.PHONY: clean distclean utils
+
+clean: 
+	-rm -f *.o dumbSort
+
+distclean: clean
+	-rm -f *.o gensort valsort
+	$(MAKE) -C $(UTILS) clean
+
+utils:
+	$(MAKE) -C $(UTILS)
+
+gensort: $(UTILS)/gensort utils
+	cp $(UTILS)/gensort .
+
+valsort: $(UTIS)/valsort utils
+	cp $(UTILS)/valsort .
 
 dumbSort: dumbSort.cpp gray_sort_record.h
-	$(CC) -std=c++11 -Wall -o dumbSort dumbSort.cpp
+	$(CC) -std=c++11 $(CFLAGS) -o dumbSort dumbSort.cpp
 
-clean:
-	-rm -f *.o mpi-pi dumbSort gensort valsort
-	+cd gensort-1.5 && make clean
 
 
 
