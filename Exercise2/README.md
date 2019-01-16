@@ -1,3 +1,10 @@
+---
+title:  Exercise One - Sorting
+author: Prof. Dr. Ronald C. Moore 
+        <ronald.moore@h-da.de>
+date:   January 2019
+...
+
 Exercise 3 -- Matrix Multiplication
 ===================================
 
