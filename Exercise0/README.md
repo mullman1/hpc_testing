@@ -1,3 +1,13 @@
+---
+title:  Exercise Zero - Gettig Started
+author: Prof. Dr. Ronald C. Moore 
+        <ronald.moore@h-da.de>
+date:   January 2019
+...
+
+
+
+
 Exercise Zero : Getting Started
 ===============================
 

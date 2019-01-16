@@ -1,3 +1,10 @@
+---
+title:  Exercise One - Sorting
+author: Prof. Dr. Ronald C. Moore 
+        <ronald.moore@h-da.de>
+date:   January 2019
+...
+
 # Exercise One : Sorting
 
 The goal of this exercise is to investigate ways to do sorting in parallel, using threads. 
