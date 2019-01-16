@@ -4,38 +4,47 @@
 # (Signed, Prof. R. Moore, h_da, fbi )
 
 # --------------------------------------------------------------------------
+
+# Choose a C++ and a C Compiler!
+# Ether gnu compiler chain (gcc):
+# C++ = g++8 
+# CC = gcc8
+# Or clang / LLVM:
+C++ = c++
+CC = cc
+
 all: mpi-pi cpp11-pi openMP-pi
 
 clean:
 	-rm -f *.o mpi-pi cpp11-pi openMP-pi
 
 mpi-pi.o: mpi-pi.c
-	mpicc -c $<
+	mpicc -cc="$(CC)" -O3 -c $<
 
 mpi-pi: mpi-pi.o
-	mpicc -o mpi-pi mpi-pi.o
+	mpicc -cc="$(CC)" -O3 -o mpi-pi mpi-pi.o
 
 
 cpp11-pi.o: cpp11-pi.cpp
-	c++ -std=c++11 -pthread -c $<
+	$(C++) -std=c++11 -O3 -pthread -c $<
 
 cpp11-pi: cpp11-pi.o
-	c++ -std=c++11 -o cpp11-pi cpp11-pi.o -pthread
+	$(C++) -std=c++11 -O3 -o cpp11-pi cpp11-pi.o -pthread
 
 openMP-pi.o: openMP-pi.cpp
-	c++ -std=c++11 -I/usr/local/include -fopenmp -c $<
+	$(C++) -std=c++11 -I/usr/local/include -O3 -fopenmp -c $<
 
 openMP-pi: openMP-pi.o
-	c++ -std=c++11 -L/usr/local/lib -fopenmp -o openMP-pi openMP-pi.o
+	$(C++) -std=c++11 -L/usr/local/lib -fopenmp -O3 -o openMP-pi openMP-pi.o
 
 tests: all
 #  Use these tests if you have both slurm and mpich (i.e. on the BDC!)
 	echo -e "\nRunning cpp11-pi with slurm...";
-	srun ./cpp11-pi 4
+	salloc -n 16 ./cpp11-pi 16
 	echo -e "\nRunning openMP-pi... with slurm...";
-	salloc -n 4 ./openMP-pi 4
+	srun -n 16 ./openMP-pi 16
 	echo -e "\nRunning mpi-pi...";
-	salloc -N 4 -n 4 mpiexec --prepend-rank  ./mpi-pi
+	salloc -N 4 -n 16 mpiexec --prepend-rank  ./mpi-pi
 # If you are using mpich without slurm (perhaps on your own notebook?)
 # use these tests instead:
 	# echo -e "\nRunning cpp11-pi without slurm...";
