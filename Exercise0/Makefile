@@ -40,9 +40,9 @@ openMP-pi: openMP-pi.o
 tests: all
 #  Use these tests if you have both slurm and mpich (i.e. on the BDC!)
 	echo -e "\nRunning cpp11-pi with slurm...";
-	salloc -n 16 ./cpp11-pi 16
+	salloc -c 16 ./cpp11-pi 16
 	echo -e "\nRunning openMP-pi... with slurm...";
-	srun -n 16 ./openMP-pi 16
+	srun -T 16 ./openMP-pi 16
 	echo -e "\nRunning mpi-pi...";
 	salloc -N 4 -n 16 mpiexec --prepend-rank  ./mpi-pi
 # If you are using mpich without slurm (perhaps on your own notebook?)
