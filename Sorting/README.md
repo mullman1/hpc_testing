@@ -2,10 +2,10 @@
 title:  Exercise Two - Sorting
 author: Prof. Dr. Ronald C. Moore 
         <ronald.moore@h-da.de>
-date:   October 2012
+date:   October 2021
 ...
 
-# Exercise Twp : Sorting
+# Exercise Tw0 : Sorting
 
 The goal of this exercise is to investigate ways to do sorting in parallel, using multiple hosts and message passing (!). 
 
@@ -46,7 +46,7 @@ When we're done, it is simply polite to delete our data files:
 
     rm -iv /tmp/*.dat
 
-### Exercise 1 -- Your Assignment
+### Exercise 2 -- Less Dumb Sortin
 
 Your job now is to create a parallel, message passing sort program. You may start with the code from the dumbsort program if you like, or you might want to start from scratch. This is up to you. 
 
