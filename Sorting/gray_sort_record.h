@@ -39,7 +39,7 @@ public:
 	// unsigned char *data( ) const { return data; }
 	
 	// overloaded "less than" operator
-	bool operator <(const graySortRecord& rhs) // rhs = right hand side
+	bool operator <(const graySortRecord& rhs) const // rhs = right hand side
 	{   return ( memcmp( data, rhs.data, key_size ) < 0 );  }
 
 	// overloaded input

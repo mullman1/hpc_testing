@@ -1,22 +1,22 @@
 ---
-title:  Exercise One - Sorting
+title:  Exercise Two - Sorting
 author: Prof. Dr. Ronald C. Moore 
         <ronald.moore@h-da.de>
-date:   January 2019
+date:   October 2012
 ...
 
-# Exercise One : Sorting
+# Exercise Twp : Sorting
 
-The goal of this exercise is to investigate ways to do sorting in parallel, using threads. 
+The goal of this exercise is to investigate ways to do sorting in parallel, using multiple hosts and message passing (!). 
 
 ### Code provided to get you started
 
-We will be sorting 100 byte records taken from files. This idea was taken from the "Sort Benchmark" hosted at http://sortbenchmark.org/ -- see that web page for much more information.
+We will be sorting 100 byte records taken from files. This idea was taken from the "Sort Benchmark" hosted at <http://sortbenchmark.org/> -- see that web page for much more information.
 
 There are three tools here:
 1. **gensort** -- a tool for generating data to be sorted. 
 2. **valsort** -- a tool for validating sorted output.
-3. **dumbSort** -- a non-parallel (single-threaded), very simple sorting program that takes input created by gensort and creates output which can be validated by valsort. This code was written by Prof. R. C. Moore (<ronald.moore@h-da.de>) for the P&DC course.
+3. **dumbSort** -- a non-parallel (single-threaded), very simple sorting program that takes input created by gensort and creates output which can be validated by valsort. This code was written by Prof. R. C. Moore (<ronald.moore@h-da.de>) for the HPC (formerly P&DC) course.
 
 To build the tools, simply enter "make" on the command line. 
 
@@ -48,7 +48,7 @@ When we're done, it is simply polite to delete our data files:
 
 ### Exercise 1 -- Your Assignment
 
-Your job now is to create a parallel, multi-threaded sort program. You may start with the code from the dumbsort program if you like, or you might want to start from scratch. This is up to you. 
+Your job now is to create a parallel, message passing sort program. You may start with the code from the dumbsort program if you like, or you might want to start from scratch. This is up to you. 
 
 Tip: You can find large (read-only) test input on the BDC in the directory 
 

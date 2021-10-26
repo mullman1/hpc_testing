@@ -7,8 +7,9 @@
 # Alternatives Compilers:
 # CC = g++7
 # CC = g++8
-# CC = clang++ # BROKEN - Beware!!!
-CC = cpp
+CC = g++
+# CC = clang++ 
+# CC = c++
 
 CFLAGS=-Wall -O3
 
@@ -17,9 +18,9 @@ CFLAGS=-Wall -O3
 
 UTILS=gensort-1.5
 
-All: dumbSort utils
-
 .PHONY: clean distclean utils
+
+All: dumbSort utils
 
 clean: 
 	-rm -f *.o dumbSort
@@ -34,7 +35,7 @@ utils:
 gensort: $(UTILS)/gensort utils
 	cp $(UTILS)/gensort .
 
-valsort: $(UTIS)/valsort utils
+valsort: $(UTILS)/valsort utils
 	cp $(UTILS)/valsort .
 
 dumbSort: dumbSort.cpp gray_sort_record.h
