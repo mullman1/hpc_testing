@@ -9,7 +9,7 @@
 
 using namespace std;
 
-// create matrix from given file
+// create matrix from given file (input!)
 CMatrix::CMatrix(const char* filename) {
     width = 0;
     height = 0;
@@ -43,15 +43,10 @@ CMatrix::CMatrix(unsigned int w, unsigned int h) {
     }
 }
 
+// Destructor
 CMatrix::~CMatrix() { delete[] container; container = NULL; }
 
-unsigned int CMatrix::size() { return height * width; }
-
-double * CMatrix::operator[]( unsigned int rowNumber ) {
-    assert( rowNumber < height );
-    return container + (rowNumber * width );
-}
-
+// Output 
 void CMatrix::print() {
     cout << width << " " << height << endl;
     for(unsigned int i=0; i<size(); i++) {

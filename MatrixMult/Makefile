@@ -3,12 +3,14 @@
 ################################################################
 # oct-2010 - a.knirsch@fbi.h-da.de                             #
 # April-2013 - ronald.moore@h-da.de  (added make test)         #
+# Oct-2021 - Removed MPI stuff
 ################################################################
 
-CXX	= mpic++
+CXX	= c++  
+# or set CXX to be clang++ or g++ or mpic++ -- compare kickoff makefile.
 CFLAGS	= -O1
-PROGS	= matrix_sequential matrix_parallel matrix_generator
-OBJS	= matrix_sequential.o matrix_parallel.o matrix_generator.o CMatrix.o
+PROGS	= matrix_sequential matrix_generator
+OBJS	= matrix_sequential.o matrix_generator.o CMatrix.o
 TESTFILES = matrix-A-10x10.txt matrix-B-10x10.txt
 
 CFLAGS	+= -I/usr/local/include/
@@ -25,9 +27,7 @@ all: $(PROGS) $(TESTFILES)
 
 $(PROGS): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@  $@.o  CMatrix.o
-#	$(CXX) $(LDFLAGS) -o matrix_generator  matrix_generator.o  CMatrix.o
-#	$(CXX) $(LDFLAGS) -o matrix_sequential matrix_sequential.o CMatrix.o
-#	$(CXX) $(LDFLAGS) -o matrix_parallel   matrix_parallel.o   CMatrix.o
+
 
 %.o: %.cpp
 	$(CXX) $(CFLAGS) -c -o $@ $<
@@ -43,6 +43,7 @@ distclean: clean
 
 test:  $(PROGS) $(TESTFILES)
 	echo "Calling matrix_sequential..."
-	srun ./matrix_sequential $(TESTFILES)
-	echo "Calling matrix_parallel..."
-	salloc -N 1 -n 1 mpiexec ./matrix_parallel $(TESTFILES)
+	./matrix_sequential $(TESTFILES)
+# Or, usiong slurm...
+#	srun ./matrix_sequential $(TESTFILES)
+

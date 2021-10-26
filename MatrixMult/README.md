@@ -1,18 +1,17 @@
 ---
-title:  Exercise One - Sorting
+title:  Exercise One - Matrix Multiplication
 author: Prof. Dr. Ronald C. Moore 
         <ronald.moore@h-da.de>
-date:   January 2019
+date:   Octorber 2021
 ...
 
-Exercise 3 -- Matrix Multiplication
+Exercise 1 -- Matrix Multiplication
 ===================================
 
-This directory contains a Makefile and three programs:
+This directory contains a Makefile and two programs:
 1. matrix_generator -- creates matrix files with random numbers. Output is written to standard out.
 1. matrix_sequential -- multiplies two matrix files (in the format created by matrix_generator
-1. matrix_parallel -- an MPI program that reads in two matrix files, forgets to multiply them,
-and then writes out a blank result matrix.
+
 
 ### Building the Programs
 

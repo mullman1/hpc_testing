@@ -1,19 +1,18 @@
 // file...: matrix_sequential.cpp
 // desc...: minimalistic matrix multiplication solution
 // oct-2010 | a.knirsch@fbi.h-da.de
+// oct-2021 | Major Revision -- Simplified CMatrix class (!) | ronald.moore@h-da.de
 
 #include <iostream>
 #include <assert.h>
 #include "CMatrix.h"
 
-using namespace std;
-
 void printError(const char* progname, const char* error) {
     if(error != NULL) {
-        cerr << "ERROR: " << error << endl;
+        std::cerr << "ERROR: " << error << std::endl;
     }
-    cerr << "usage: " << progname << " <matrix1> <matrix2>" << endl
-    << "\twhere <matrix1> and <matrix2> are file names containing matrices." << endl;
+    std::cerr << "usage: " << progname << " <matrix1> <matrix2>" << std::endl
+    << "\twhere <matrix1> and <matrix2> are file names containing matrices." << std::endl;
 }
 
 
