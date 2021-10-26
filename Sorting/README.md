@@ -5,7 +5,7 @@ author: Prof. Dr. Ronald C. Moore
 date:   October 2021
 ...
 
-# Exercise Tw0 : Sorting
+# Exercise Two : Sorting
 
 The goal of this exercise is to investigate ways to do sorting in parallel, using multiple hosts and message passing (!). 
 
