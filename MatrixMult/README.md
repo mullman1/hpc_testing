@@ -37,14 +37,8 @@ After that, each row contains one row of the matrix. The matrices hold floating 
 
 ### Exercise
 
-Write a better matrix multiplication program using MPI.
-
-In other words, do *not* use shared memory; assume a distributed memory
-and use message passing communication between processes (not threads, but processes).
-
-In your design, analysis and lab report, think about space as well as time.
-In other words, the goal is not *only* to be as fast as possible,
-it is also to multiply *very large* matrices.
+Write a better matrix multiplication program using threads and shared memory.
+First, use OpenMP. Consider doing it by hand by using native threads.
 
 ### Acknowledgements and Apologies
 
