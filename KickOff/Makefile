@@ -10,21 +10,21 @@
 # C++ = g++
 # CC = gcc
 # Or clang / LLVM:
-# C++ = clang++
-# CC = clang
+C++ = clang++
+CC = clang
 # Or whatever is the default on your system:
-C++ = c++
-CC = cc
+# C++ = c++
+# CC = cc
 
 CPPFLAGS = -std=c++11 -I/user/local/include  -O3
 LDFLAGS  = -std=c++11 -L/user/local/lib      -O3
 
 # On MacOS, use homebrew to install llvm and libomp ("brew install llvm libomp"), then
-C++ = /opt/homebrew/opt/llvm/bin/clang++
-CC = /opt/homebrew/opt/llvm/bin/clang
+# C++ = /opt/homebrew/opt/llvm/bin/clang++
+# CC = /opt/homebrew/opt/llvm/bin/clang
 
-CPPFLAGS += -I/opt/homebrew/opt/llvm/include
-LDFLAGS += -L/opt/homebrew/opt/llvm/lib
+# CPPFLAGS += -I/opt/homebrew/opt/llvm/include
+# LDFLAGS += -L/opt/homebrew/opt/llvm/lib
 
 
 
@@ -59,18 +59,20 @@ openMP-pi: openMP-pi.o
 	$(C++) $(LDFLAGS) -fopenmp -O3 -o openMP-pi openMP-pi.o
 
 tests: all
-#  Use these tests if you have both slurm and mpich (i.e. on the BDC!)
-# 	echo "\nRunning cpp11-pi with slurm...";
-# 	salloc -c 16 ./cpp11-pi 16
-# 	echo "\nRunning openMP-pi... with slurm...";
-# 	srun -T 16 ./openMP-pi 16
-# 	echo "\nRunning mpi-pi...";
-# 	salloc -N 4 -n 16 mpiexec --prepend-rank  ./mpi-pi
+#  Use these tests if you have both slurm and OpenMPI (i.e. on the BDC!)
+	echo "Sync'ing src tree"
+	../rsyncBDC.sh
+	echo "\nRunning cpp11-pi with slurm...";
+	srun -T 16 ./cpp11-pi 16
+	echo "\nRunning openMP-pi with slurm...";
+	srun -T 16 ./openMP-pi 16
+	echo "\nRunning mpi-pi with salloc mpiexec...";
+	salloc -N 4 -n 16 mpiexec  ./mpi-pi
 # If you are using mpich without slurm (perhaps on your own notebook?)
 # use these tests instead:
-	echo "\nRunning cpp11-pi without slurm...";
-	./cpp11-pi 4
-	echo "\nRunning openMP-pi without slurm...";
-	./openMP-pi 4
-	echo "\nRunning mpi-pi without slurm...";
-	mpiexec -n 4 ./mpi-pi
+#	echo "\nRunning cpp11-pi without slurm...";
+#	./cpp11-pi 4
+#	echo "\nRunning openMP-pi without slurm...";
+#	./openMP-pi 4
+#	echo "\nRunning mpi-pi without slurm...";
+#	mpiexec -n 4 ./mpi-pi
