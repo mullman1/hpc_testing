@@ -10,14 +10,14 @@
 # C++ = g++
 # CC = gcc
 # Or clang / LLVM:
-C++ = clang++
-CC = clang
+# C++ = clang++
+# CC = clang
 # Or whatever is the default on your system:
-# C++ = c++
-# CC = cc
+C++ = c++
+CC = cc
 
-CPPFLAGS = -std=c++11 -I/user/local/include  -O3
-LDFLAGS  = -std=c++11 -L/user/local/lib      -O3
+CPPFLAGS = -std=c++14 -I/user/local/include  -O3
+LDFLAGS  = -std=c++14 -L/user/local/lib      -O3
 
 # On MacOS, use homebrew to install llvm and libomp ("brew install llvm libomp"), then
 # C++ = /opt/homebrew/opt/llvm/bin/clang++
@@ -63,9 +63,9 @@ tests: all
 	echo "Sync'ing src tree"
 	../rsyncBDC.sh
 	echo "\nRunning cpp11-pi with slurm...";
-	srun -T 16 ./cpp11-pi 16
+	srun -c 16 ./cpp11-pi 16
 	echo "\nRunning openMP-pi with slurm...";
-	srun -T 16 ./openMP-pi 16
+	srun -c 16 ./openMP-pi 16
 	echo "\nRunning mpi-pi with salloc mpiexec...";
 	salloc -N 4 -n 16 mpiexec  ./mpi-pi
 # If you are using mpich without slurm (perhaps on your own notebook?)
