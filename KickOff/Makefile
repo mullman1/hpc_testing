@@ -58,16 +58,18 @@ openMP-pi.o: openMP-pi.cpp
 openMP-pi: openMP-pi.o
 	$(C++) $(LDFLAGS) -fopenmp -O3 -o openMP-pi openMP-pi.o
 
+NUM_THREADS = 16
+
 tests: all
 #  Use these tests if you have both slurm and OpenMPI (i.e. on the BDC!)
 	echo "Sync'ing src tree"
 	../rsyncBDC.sh
 	echo "\nRunning cpp11-pi with slurm...";
-	srun -c 16 ./cpp11-pi 16
+	srun -c ${NUM_THREADS} ./cpp11-pi ${NUM_THREADS}
 	echo "\nRunning openMP-pi with slurm...";
-	srun -c 16 ./openMP-pi 16
+	srun -c ${NUM_THREADS} ./openMP-pi ${NUM_THREADS}
 	echo "\nRunning mpi-pi with salloc mpiexec...";
-	salloc -N 4 -n 16 mpiexec  ./mpi-pi
+	salloc --nodes=4 --ntasks-per-node=4  mpiexec  ./mpi-pi
 # If you are using mpich without slurm (perhaps on your own notebook?)
 # use these tests instead:
 #	echo "\nRunning cpp11-pi without slurm...";

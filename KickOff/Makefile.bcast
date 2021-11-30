@@ -58,13 +58,15 @@ openMP-pi.o: openMP-pi.cpp
 openMP-pi: openMP-pi.o
 	$(C++) $(LDFLAGS) -fopenmp -O3 -o openMP-pi openMP-pi.o
 
+NUM_THREADS = 16
+
 tests: all
 #  Use these tests if you have both slurm and OpenMPI (i.e. on the BDC!)
-	srun --bcast=${PWD}/cpp11-pi  -T 16 ./cpp11-pi 16
-	srun --bcast=${PWD}/openMP-pi -T 16 ./openMP-pi 16
-	salloc -N4 -n16 bash -x -c "		 \
-		sbcast mpi-pi ${PWD}/mpi-pi;	  \
-		mpiexec  ./mpi-pi "
+	srun -p big   --bcast=${PWD}/cpp11-pi  -c ${NUM_THREADS} -n 1 ./cpp11-pi ${NUM_THREADS}
+	srun -p big   --bcast=${PWD}/openMP-pi -c ${NUM_THREADS} -n 1 ./openMP-pi ${NUM_THREADS}
+	salloc -p small --nodes=4 --ntasks-per-node=4 bash -x -c "sbcast -f mpi-pi ${PWD}/mpi-pi; \
+							          mpiexec mpi-pi "
+
 # If you are using mpich without slurm (perhaps on your own notebook?)
 # use these tests instead:
 #	echo "\nRunning cpp11-pi without slurm...";
