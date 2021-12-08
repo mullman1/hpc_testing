@@ -58,9 +58,9 @@ openMP-pi: openMP-pi.o
 
 tests: all
 #  Use these tests if you have both slurm and OpenMPI (i.e. on the BDC!)
-	srun  -p debug -c 16 ./cpp11-pi 16
-	srun  -p debug -c 16 ./openMP-pi 16
-	salloc -p debug --nodes=4 --ntasks-per-node=4 -c 1 srun    ./mpi-pi
-# or 	salloc <options, as above>  mpiexec ./mpi-pi
-# or 	salloc <options, as above>  ./mpi-pi
+	srun  -p debug -c 16 -- ./cpp11-pi 16
+	srun  -p debug -c 16 -- ./openMP-pi 16
+	salloc -p debug --nodes=4 --ntasks-per-node=4 -c 1 -- srun  --  ./mpi-pi
+# or 	salloc <options, as above> --  mpiexec ./mpi-pi
+# or 	salloc <options, as above> -- ./mpi-pi
 
