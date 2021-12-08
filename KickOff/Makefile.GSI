@@ -7,14 +7,14 @@
 
 # Choose a C++ and a C Compiler!
 # Ether gnu compiler chain (gcc):
-# C++ = g++
-# CC = gcc
+C++ = g++
+CC = gcc
 # Or clang / LLVM:
 # C++ = clang++
 # CC = clang
 # Or whatever is the default on your system:
-C++ = c++
-CC = cc
+# C++ = c++
+# CC = cc
 
 CPPFLAGS = -std=c++14 -I/user/local/include  -O3
 LDFLAGS  = -std=c++14 -L/user/local/lib      -O3
