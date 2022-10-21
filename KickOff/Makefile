@@ -10,11 +10,11 @@
 # C++ = g++
 # CC = gcc
 # Or clang / LLVM:
-C++ = clang++
-CC = clang
+# C++ = clang++
+# CC = clang
 # Or whatever is the default on your system:
-# C++ = c++
-# CC = cc
+C++ = c++
+CC = cc
 
 # Depending on your OS and local installation of clang, openmp, MPI, etc.,
 # you MIGHT need to uncomment one or more of the following lines:
@@ -73,6 +73,8 @@ openMP-pi.o: openMP-pi.cpp
 
 openMP-pi: openMP-pi.o
 	$(C++) $(LDFLAGS) -fopenmp -o $@ $^
+
+NUM_THREADS = 16
 
 tests: all
 ###  Use these tests if you have both slurm and OpenMPI (i.e. at the GSI!)
