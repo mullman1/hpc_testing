@@ -7,11 +7,11 @@
 
 # Choose a C++ and a C Compiler!
 # Ether gnu compiler chain (gcc):
-# C++ = g++
-# CC = gcc
+C++ = g++
+CC = gcc
 # Or clang / LLVM:
-C++ = clang++
-CC = clang
+# C++ = clang++
+# CC = clang
 # Or whatever is the default on your system:
 # C++ = c++
 # CC = cc
@@ -78,25 +78,21 @@ NUM_THREADS = 4
 
 tests: all
 ###  Use these tests if you have both slurm and OpenMPI (i.e. at the GSI!)
-# 	echo "\nRunning cpp11-pi with slurm...";
-# 	srun --bcast=${PWD}/cpp11-pi -T 4 ./cpp11-pi 4
-# 	echo "\nRunning openMP-pi with slurm...";
-# 	srun --bcast=${PWD}/openMP-pi -T 4 ./openMP-pi 4
-# 	echo "\nRunning mpi-pi with salloc mpiexec...";
-# 	salloc -N 4 -n 4 mpiexec --mca btl tcp,self ./mpi-pi
-# 	echo "\nRunning mpi-pi++ with salloc mpiexec...";
-# 	salloc -N 4 -n 4 mpiexec --mca btl tcp,self ./mpi-pi++
+	srun -p debug -c $(NUM_THREADS) -- ./cpp11-pi $(NUM_THREADS)
+	srun -p debug -c $(NUM_THREADS) -- ./openMP-pi $(NUM_THREADS)
+	salloc -p debug --nodes=$(NUM_THREADS) --ntasks-per-node=1 -c 1 -- srun -- ./mpi-pi
+	salloc -p debug --nodes=$(NUM_THREADS) --ntasks-per-node=1 -c 1 -- srun -- ./mpi-pi++
 
 ### If you are using mpich without slurm (perhaps on your own notebook?)
 # use these tests instead:
-	echo "\nRunning cpp11-pi without slurm...";
-	./cpp11-pi $(NUM_THREADS)
-	echo "\nRunning openMP-pi without slurm...";
-	./openMP-pi $(NUM_THREADS)
-	echo "\nRunning mpi-pi++ without slurm...";
-	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi++
-	echo "\nRunning mpi-pi without slurm...";
-	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi
+#	echo "\nRunning cpp11-pi without slurm...";
+#	./cpp11-pi $(NUM_THREADS)
+#	echo "\nRunning openMP-pi without slurm...";
+#	./openMP-pi $(NUM_THREADS)
+#	echo "\nRunning mpi-pi++ without slurm...";
+#	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi++
+#	echo "\nRunning mpi-pi without slurm...";
+#	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi
 
 # Note on "--mca btl tcp,self" (with mpiexec)
 # See https://www.open-mpi.org/faq/?category=tcp
