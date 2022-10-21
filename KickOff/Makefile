@@ -10,11 +10,11 @@
 # C++ = g++
 # CC = gcc
 # Or clang / LLVM:
-# C++ = clang++
-# CC = clang
+C++ = clang++
+CC = clang
 # Or whatever is the default on your system:
-C++ = c++
-CC = cc
+# C++ = c++
+# CC = cc
 
 # Depending on your OS and local installation of clang, openmp, MPI, etc.,
 # you MIGHT need to uncomment one or more of the following lines:
@@ -74,7 +74,7 @@ openMP-pi.o: openMP-pi.cpp
 openMP-pi: openMP-pi.o
 	$(C++) $(LDFLAGS) -fopenmp -o $@ $^
 
-NUM_THREADS = 16
+NUM_THREADS = 4
 
 tests: all
 ###  Use these tests if you have both slurm and OpenMPI (i.e. at the GSI!)
@@ -90,13 +90,13 @@ tests: all
 ### If you are using mpich without slurm (perhaps on your own notebook?)
 # use these tests instead:
 	echo "\nRunning cpp11-pi without slurm...";
-	./cpp11-pi 4
+	./cpp11-pi $(NUM_THREADS)
 	echo "\nRunning openMP-pi without slurm...";
-	./openMP-pi 4
+	./openMP-pi $(NUM_THREADS)
 	echo "\nRunning mpi-pi++ without slurm...";
-	mpiexec --mca btl tcp,self -n 4 ./mpi-pi++
+	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi++
 	echo "\nRunning mpi-pi without slurm...";
-	mpiexec --mca btl tcp,self -n 4 ./mpi-pi
+	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi
 
 # Note on "--mca btl tcp,self" (with mpiexec)
 # See https://www.open-mpi.org/faq/?category=tcp
