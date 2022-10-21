@@ -78,21 +78,21 @@ NUM_THREADS = 4
 
 tests: all
 ###  Use these tests if you have both slurm and OpenMPI (i.e. at the GSI!)
-	srun -p debug -c $(NUM_THREADS) -- ./cpp11-pi $(NUM_THREADS)
-	srun -p debug -c $(NUM_THREADS) -- ./openMP-pi $(NUM_THREADS)
-	salloc -p debug --nodes=$(NUM_THREADS) --ntasks-per-node=1 -c 1 -- srun -- ./mpi-pi
-	salloc -p debug --nodes=$(NUM_THREADS) --ntasks-per-node=1 -c 1 -- srun -- ./mpi-pi++
+# 	srun -p debug -c $(NUM_THREADS) -- ./cpp11-pi $(NUM_THREADS)
+# 	srun -p debug -c $(NUM_THREADS) -- ./openMP-pi $(NUM_THREADS)
+# 	salloc -p debug --nodes=$(NUM_THREADS) --ntasks-per-node=1 -c 1 -- srun -- ./mpi-pi
+# 	salloc -p debug --nodes=$(NUM_THREADS) --ntasks-per-node=1 -c 1 -- srun -- ./mpi-pi++
 
 ### If you are using mpich without slurm (perhaps on your own notebook?)
 # use these tests instead:
-#	echo "\nRunning cpp11-pi without slurm...";
-#	./cpp11-pi $(NUM_THREADS)
-#	echo "\nRunning openMP-pi without slurm...";
-#	./openMP-pi $(NUM_THREADS)
-#	echo "\nRunning mpi-pi++ without slurm...";
-#	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi++
-#	echo "\nRunning mpi-pi without slurm...";
-#	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi
+	echo "\nRunning cpp11-pi without slurm...";
+	./cpp11-pi $(NUM_THREADS)
+	echo "\nRunning openMP-pi without slurm...";
+	./openMP-pi $(NUM_THREADS)
+	echo "\nRunning mpi-pi++ without slurm...";
+	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi++
+	echo "\nRunning mpi-pi without slurm...";
+	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi
 
 # Note on "--mca btl tcp,self" (with mpiexec)
 # See https://www.open-mpi.org/faq/?category=tcp
