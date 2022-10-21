@@ -32,7 +32,7 @@ double f(double a)
 } // end f
 
 const double PI25DT = 3.141592653589793238462643; // No, we're not cheating -this is for testing!
-const int    n = 10000000;          /* default # of rectangles */
+const long   n = 42l * 1024 * 1024;               // default # of rectangles (42l = long int 42)
 const double h   = 1.0 / (double) n;
 
 const double maxNumThreads = 1024; // this is only for sanity checking
@@ -42,8 +42,8 @@ void pi_thread( int thread_num, int numThreads, double *partial_pi )
     assert( 0 <= thread_num );
     assert( thread_num < maxNumThreads );
     double sum = 0.0;
-    /* A slightly better approach starts from large i and works back */
-    for ( int i = thread_num + 1; i <= n; i += numThreads )
+    /* It would have been better to start from large i and count down, by the way. */
+    for ( long i = thread_num + 1; i <= n; i += numThreads )
     {
         double x = h * ((double)i - 0.5);
         sum += f(x);
@@ -96,7 +96,8 @@ int main(int argc,char *argv[])
               << ", Error is " << std::fabs(pi - PI25DT) << std::endl;
     std::cout << std::setprecision( 8 )
               << "Wall clock time = " << runTime << " seconds."
-              << std::endl << std::flush;
+              << std::endl;
+    std::cout << "There were " << numThreads << " threads." << std::endl;              
 
     return 0;
 }

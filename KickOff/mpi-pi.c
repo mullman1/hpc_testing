@@ -15,13 +15,17 @@ double f(double a)
 
 int main(int argc,char *argv[])
 {
-    int    n, myid, numprocs, i;
-    double PI25DT = 3.141592653589793238462643;
+    // Strictly speaking, we could have made n a constant, like it is in our other programs, 
+    // but this way we can demonstrate how a broadcast works.
+    long   i, n;    // n is the number of rectangles, i is the rectangle number.
+    int    myid, numprocs;
+    const double PI25DT = 3.141592653589793238462643;
     double mypi, pi, h, sum, x;
     double startwtime = 0.0, endwtime;
     int    namelen;
     char   processor_name[MPI_MAX_PROCESSOR_NAME];
 
+	/** Standard MPI opening boilerplate **/
     MPI_Init(&argc,&argv);
     MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD,&myid);
@@ -31,30 +35,33 @@ int main(int argc,char *argv[])
         myid, numprocs, processor_name);
     fflush(stdout);
 
-    n = 10000000;          /* default # of rectangles */
-    if (myid == 0)
-    startwtime = MPI_Wtime();
+    /** Actual work starts here */
 
-    MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    if (0 == myid) {
+    	startwtime = MPI_Wtime();    	
+    	n = 42l * 1024 * 1024; /* default # of rectangles (42l = long int 42) */
+    };
+
+    MPI_Bcast(&n, 1, MPI_LONG_INT, 0, MPI_COMM_WORLD);
 
     h   = 1.0 / (double) n;
     sum = 0.0;
-    /* A slightly better approach starts from large i and works back */
+    /* It would have been better to start from large i and count down, by the way. */
     for (i = myid + 1; i <= n; i += numprocs)
     {
-    x = h * ((double)i - 0.5);
-    sum += f(x);
+		x = h * ((double)i - 0.5);
+		sum += f(x);
     }
     mypi = h * sum;
 
     MPI_Reduce(&mypi, &pi, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-    if (myid == 0) {
-    endwtime = MPI_Wtime();
-    printf("Pi is approximately %.16f, Error is %.8e\n",
-           pi, fabs(pi - PI25DT));
-    printf("Wall clock time = %.8f seconds.\n", (endwtime-startwtime) );
-    fflush(stdout);
+    if (0 == myid) {
+		endwtime = MPI_Wtime();
+		printf("Pi is approximately %.16f, Error is %.8e\n",
+			   pi, fabs(pi - PI25DT));
+		printf("Wall clock time = %.8f seconds.\n", (endwtime-startwtime) );
+		fflush(stdout);
     }
 
     MPI_Finalize();
