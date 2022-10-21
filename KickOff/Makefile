@@ -24,9 +24,9 @@ CC = clang
 # CPPFLAGS += -I/opt/homebrew/opt/llvm/include/
 # LDFLAGS  += -L/opt/homebrew/opt/llvm/lib/
 
-# This should work on all OS's
-CPPFLAGS += -O3
-LDFLAGS  += -O3
+# This should work on all OS's (
+CPPFLAGS +=  --std=c++17 -O3
+LDFLAGS  +=  --std=c++17 -O3
 
 # This makefile makes the following programs
 TARGETS = mpi-pi mpi-pi++ cpp11-pi openMP-pi 
@@ -91,10 +91,10 @@ tests: all
 	./cpp11-pi 4
 	echo "\nRunning openMP-pi without slurm...";
 	./openMP-pi 4
-	echo "\nRunning mpi-pi without slurm...";
-	mpiexec --mca btl tcp,self -n 4 ./mpi-pi
 	echo "\nRunning mpi-pi++ without slurm...";
 	mpiexec --mca btl tcp,self -n 4 ./mpi-pi++
+	echo "\nRunning mpi-pi without slurm...";
+	mpiexec --mca btl tcp,self -n 4 ./mpi-pi
 
 # Note on "--mca btl tcp,self" (with mpiexec)
 # See https://www.open-mpi.org/faq/?category=tcp
