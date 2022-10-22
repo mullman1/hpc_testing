@@ -28,9 +28,19 @@ all: $(PROGS) $(TESTFILES)
 # $* = The stem of the filename of the target (i.e. without .o, .cpp...)
 # $^ = The names of all the prerequisites, with spaces between them.
 
-$(PROGS): $(OBJS)
+# This works but it recompiles too much ...
+# $(PROGS): $(OBJS)
+# 	$(CXX) $(LDFLAGS) -o $@  $@.o  CMatrix.o
+
+# This is more accurate (and thus does less work)
+matrix_sequential: matrix_sequential.o CMatrix.o
 	$(CXX) $(LDFLAGS) -o $@  $@.o  CMatrix.o
 
+matrix_generator:  matrix_generator.o CMatrix.o
+	$(CXX) $(LDFLAGS) -o $@  $@.o  CMatrix.o
+
+CMatrix.o: CMatrix.cpp CMatrix.h
+	$(CXX) $(CFLAGS) -c -o $@ $<
 
 %.o: %.cpp
 	$(CXX) $(CFLAGS) -c -o $@ $<
