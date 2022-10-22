@@ -6,8 +6,11 @@
 # Oct-2021 - Removed MPI stuff
 ################################################################
 
-CXX	= c++  
-# or set CXX to be clang++ or g++ or mpic++ -- compare kickoff makefile.
+# Set CXX to be clang++ or g++ or mpic++ -- compare kickoff makefile.
+# CXX	= c++  
+CXX = clang++
+# CXX = g++
+
 CFLAGS	= -O3 --std=c++17
 PROGS	= matrix_sequential matrix_generator
 OBJS	= matrix_sequential.o matrix_generator.o CMatrix.o
