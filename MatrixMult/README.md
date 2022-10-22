@@ -17,7 +17,7 @@ This directory contains a Makefile and two programs:
 
 Enter "make" at the command line.
 
-Enter "make test" to test all three programs (on very small matrices).
+Enter "make test" to test both programs (generate very small matrices and then multiply them).
 
 Enter "make clean" or "make distclean" to clean up.
 
