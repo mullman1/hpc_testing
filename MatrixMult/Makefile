@@ -8,8 +8,8 @@
 
 # Set CXX to be clang++ or g++ or mpic++ -- compare kickoff makefile.
 # CXX	= c++  
-CXX = clang++
-# CXX = g++
+# CXX = clang++
+CXX = g++
 
 CFLAGS	= -O3 --std=c++17
 PROGS	= matrix_sequential matrix_generator
@@ -56,7 +56,7 @@ distclean: clean
 
 test:  $(PROGS) $(TESTFILES)
 	echo "Calling matrix_sequential..."
-	./matrix_sequential $(TESTFILES)
-# Or, usiong slurm...
-#	srun ./matrix_sequential $(TESTFILES)
+#	./matrix_sequential $(TESTFILES)
+# Or, usiong slurm... with one process (-n 1) and one thread (-c 1) (on the debug partition)
+	srun -p debug -n 1 -c 1 -- ./matrix_sequential $(TESTFILES)
 
