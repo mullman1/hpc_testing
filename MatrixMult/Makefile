@@ -56,7 +56,10 @@ distclean: clean
 
 test:  $(PROGS) $(TESTFILES)
 	echo "Calling matrix_sequential..."
-#	./matrix_sequential $(TESTFILES)
-# Or, usiong slurm... with one process (-n 1) and one thread (-c 1) (on the debug partition)
+ifeq (, $(shell which srun)) # When srun is not available, assume we want to run locally
+	./matrix_sequential $(TESTFILES)
+else # if srun is available, use it -- e.g. at the GSI!
+#      run with one process (-n 1) and one thread (-c 1) (on the debug partition)
 	srun -p debug -n 1 -c 1 -- ./matrix_sequential $(TESTFILES)
+endif
 
