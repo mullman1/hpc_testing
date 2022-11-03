@@ -11,4 +11,4 @@ Prof. R. C. Moore <ronald.moore@h-da.de>
 CS Dept, also known as the *Facbereich Informatik* or the FbI; 
 
 Darmstadt University of Applied Sciences, 
-also known as the *Hochscule Darmstadt* or the h_da.
+also known as the *Hochschule Darmstadt* or the h_da.
