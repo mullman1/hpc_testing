@@ -77,14 +77,7 @@ openMP-pi: openMP-pi.o
 NUM_THREADS = 4
 
 tests: all
-###  Use these tests if you have both slurm and OpenMPI (i.e. at the GSI!)
-# 	srun -p debug -c $(NUM_THREADS) -- ./cpp11-pi $(NUM_THREADS)
-# 	srun -p debug -c $(NUM_THREADS) -- ./openMP-pi $(NUM_THREADS)
-# 	salloc -p debug --nodes=$(NUM_THREADS) --ntasks-per-node=1 -c 1 -- srun -- ./mpi-pi
-# 	salloc -p debug --nodes=$(NUM_THREADS) --ntasks-per-node=1 -c 1 -- srun -- ./mpi-pi++
-
-### If you are using mpich without slurm (perhaps on your own notebook?)
-# use these tests instead:
+ifeq (, $(shell which srun)) # When srun is not available, assume we want to run locally
 	echo "\nRunning cpp11-pi without slurm...";
 	./cpp11-pi $(NUM_THREADS)
 	echo "\nRunning openMP-pi without slurm...";
@@ -93,8 +86,22 @@ tests: all
 	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi++
 	echo "\nRunning mpi-pi without slurm...";
 	mpiexec --mca btl tcp,self -n $(NUM_THREADS) ./mpi-pi
+else # if srun is available, use it -- e.g. at the GSI!
+	srun -p debug -c $(NUM_THREADS) -- ./cpp11-pi $(NUM_THREADS)
+	srun -p debug -c $(NUM_THREADS) -- ./openMP-pi $(NUM_THREADS)
+	salloc -p debug --nodes=$(NUM_THREADS) --ntasks-per-node=1 -c 1 -- srun -- ./mpi-pi
+	salloc -p debug --nodes=$(NUM_THREADS) --ntasks-per-node=1 -c 1 -- srun -- ./mpi-pi++
+endif
 
-# Note on "--mca btl tcp,self" (with mpiexec)
+# Note: The test whether srun is available (above) was provided by Jakob Schrettenbrunner.
+# Many thanks!  However, it might not work with versions of make other than gnu make.
+# If it doesn't work, either install gnu make, 
+# or simply comment out the lines you do not want to use.
+
+# Note on "--mca btl tcp,self" (with mpiexec, see above)
 # See https://www.open-mpi.org/faq/?category=tcp
-# Note on "mpiexec" vs. "mpirun" 
+# (This helps on macOS, may be unnecessary elsewhere, or even problematic!)
+
+# Note on "mpiexec" vs. "mpirun" (above)
+# They are often one and the sam thing -- but not everywhere;
 # See https://stackoverflow.com/questions/25287981/mpiexec-vs-mpirun
