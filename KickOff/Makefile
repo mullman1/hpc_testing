@@ -25,8 +25,8 @@ CC = gcc
 # LDFLAGS  += -L/opt/homebrew/opt/llvm/lib/
 
 # This should work on all OS's (
-CPPFLAGS +=  --std=c++17 -O3
-LDFLAGS  +=  --std=c++17 -O3
+CPPFLAGS +=  --std=c++17 -O3 -Wall
+LDFLAGS  +=  --std=c++17 -O3 -Wall
 
 # This makefile makes the following programs
 TARGETS = mpi-pi mpi-pi++ cpp11-pi openMP-pi 
