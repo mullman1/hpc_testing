@@ -1,6 +1,7 @@
 // file...: CMatrix.h
 // desc...: minimalistic helper class to hold matrix information 
 // oct-2010 | a.knirsch@fbi.h-da.de
+// Nov 2022: Minor additions from Herr Hahn finally merged
 
 #ifndef CMATRIX_H_
 #define CMATRIX_H_
@@ -19,21 +20,25 @@ public:
 	
 	// create empty matrix with given size
 	CMatrix(unsigned int w, unsigned int h);
-	
+
+	// Copy Constructors
+	CMatrix(const CMatrix& rhs);
+	CMatrix& operator=( const CMatrix& rhs );
+
 	// destructor
 	~CMatrix();
 	
 	// size of matrix (amount of values)
-	unsigned int size() { return height * width; }
+	unsigned int size() const { return height * width; }
 	
 	// print matrix to stdout
-	void print();
+	void print() const;
 	
 	// Row selector -
 	// With this, you can use matrix[row][col] 
 	// Note that we only need to overload the first square brackets,
 	// and that we do this "inline" (here in the header) to speed it up.
-	double * operator[]( unsigned int rowNumber )  {
+	double* operator[]( unsigned int rowNumber )  {
     	assert( rowNumber < height );
     	return container + (rowNumber * width );
 	}

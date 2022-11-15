@@ -11,7 +11,7 @@
 # CXX = clang++
 CXX = g++
 
-CFLAGS	= -O3 --std=c++17
+CFLAGS	= -O3 --std=c++17 -Wall
 PROGS	= matrix_sequential matrix_generator
 OBJS	= matrix_sequential.o matrix_generator.o CMatrix.o
 TESTFILES = matrix-A-10x10.txt matrix-B-10x10.txt
@@ -42,7 +42,7 @@ matrix_generator:  matrix_generator.o CMatrix.o
 CMatrix.o: CMatrix.cpp CMatrix.h
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
-%.o: %.cpp
+%.o: %.cpp CMatrix.h
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
 $(TESTFILES): matrix_generator
