@@ -64,10 +64,10 @@ CMatrix& CMatrix::operator=( const CMatrix& rhs )
    if (( rhs.width != width) && ( rhs.height != height)) 
    {
    		delete[] container;
-   		container = new double[ rhs.size() ];
+	   	width     = rhs.width;
+   		height    = rhs.height;
+   		container = new double[ size() ];
    };
-   width = rhs.width;
-   height = rhs.height;
    for (unsigned int i = 0; i < size(); i++)
        container[i] = rhs.container[i];
    return *this;
