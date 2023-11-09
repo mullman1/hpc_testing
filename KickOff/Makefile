@@ -74,7 +74,7 @@ openMP-pi.o: openMP-pi.cpp
 openMP-pi: openMP-pi.o
 	$(C++) $(LDFLAGS) -fopenmp -o $@ $^
 
-NUM_THREADS = 4
+NUM_THREADS = 12
 
 tests: all
 ifeq (, $(shell which srun)) # When srun is not available, assume we want to run locally
