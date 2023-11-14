@@ -34,19 +34,19 @@ all: $(PROGS) $(TESTFILES)
 
 # This is more accurate (and thus does less work)
 matrix_sequential: matrix_sequential.o CMatrix.o
-        $(CXX) $(LDFLAGS) -o $@  $@.o  CMatrix.o -fopenmp
+	$(CXX) $(LDFLAGS) -o $@  $@.o  CMatrix.o -fopenmp
 
 matrix_generator:  matrix_generator.o CMatrix.o
-        $(CXX) $(LDFLAGS) -o $@  $@.o  CMatrix.o -fopenmp
+	$(CXX) $(LDFLAGS) -o $@  $@.o  CMatrix.o -fopenmp
 
 CMatrix.o: CMatrix.cpp CMatrix.h
-        $(CXX) $(CFLAGS) -c -o $@ $<
+	$(CXX) $(CFLAGS) -c -o $@ $<
 
 %.o: %.cpp CMatrix.h
-        $(CXX) $(CFLAGS) -c -o $@ $<
+	$(CXX) $(CFLAGS) -c -o $@ $<
 
 $(TESTFILES): matrix_generator
-        ./matrix_generator 1000 1000 >$@
+	./matrix_generator 1000 1000 >$@
 
 clean:
 	-rm -rf $(PROGS) *~ *.o ._*
@@ -55,11 +55,11 @@ distclean: clean
 	-rm -rf $(TESTFILES)
 
 test:  $(PROGS) $(TESTFILES)
-        echo "Calling matrix_sequential..."
+	echo "Calling matrix_sequential..."
 ifeq (, $(shell which srun)) # When srun is not available, assume we want to run locally
-        ./matrix_sequential $(TESTFILES)
+	./matrix_sequential $(TESTFILES)
 else # if srun is available, use it -- e.g. at the GSI!
-#      run with one process (-n 1) and one thread (-c 1) (on the debug partition)
-        srun -p debug -n 1 -c 2 -- ./matrix_sequential $(TESTFILES)
+#	run with one process (-n 1) and one thread (-c 1) (on the debug partition)
+	srun -p debug -n 1 -c 2 -- ./matrix_sequential $(TESTFILES)
 endif
 
