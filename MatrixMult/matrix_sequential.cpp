@@ -45,6 +45,7 @@ int main(int argc, char** argv) {
     // --- multiply matrices ---
     CMatrix result(m2.width, m1.height); // allocate memory
 
+    omp_set_dynamic(0);
     #pragma omp parallel for collapse(2)
     for (unsigned int row = 0; row < m1.height; row++) {
         for (unsigned int col = 0; col < m2.width; col++) {
