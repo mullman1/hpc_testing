@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
               << " seconds." << std::endl;
 
     // print matrix
-    result.print();
+    // result.print();
 
     auto endTime = std::chrono::system_clock::now();
     std::cerr << std::setprecision(8) << "output time = "
